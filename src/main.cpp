@@ -89,8 +89,6 @@ struct arguments {
 int parse_opt(int argc, char **argv, struct arguments *args,
 	jtag_pins_conf_t *pins_config);
 
-void displaySupported(const struct arguments &args);
-
 int main(int argc, char **argv)
 {
 	cable_t cable;
@@ -119,11 +117,6 @@ int main(int argc, char **argv)
 	} catch (std::exception &e) {
 		printError("Error in parse arg step");
 		return EXIT_FAILURE;
-	}
-
-	if (args.is_list_command) {
-		displaySupported(args);
-		return EXIT_SUCCESS;
 	}
 
 	if (args.prg_type == Device::WR_SRAM)
@@ -710,59 +703,5 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 	}
 
 	return 0;
-}
-
-/* display list of cables, boards and devices supported */
-void displaySupported(const struct arguments &args)
-{
-	if (args.list_cables == true) {
-		stringstream t;
-		t << setw(25) << left << "cable name" << "vid:pid";
-		printSuccess(t.str());
-		for (auto b = cable_list.begin(); b != cable_list.end(); b++) {
-			cable_t c = (*b).second;
-			stringstream ss;
-			ss << setw(25) << left << (*b).first;
-			ss << "0x" << hex << right << setw(4) << setfill('0') << c.vid
-				<< ":" << setw(4) << c.pid;
-			printInfo(ss.str());
-		}
-		cout << endl;
-	}
-
-	if (args.list_boards) {
-		stringstream t;
-		t << setw(25) << left << "board name" << "cable_name";
-		printSuccess(t.str());
-		for (auto b = board_list.begin(); b != board_list.end(); b++) {
-			stringstream ss;
-			target_board_t c = (*b).second;
-			ss << setw(25) << left << (*b).first << c.cable_name;
-			printInfo(ss.str());
-		}
-		cout << endl;
-	}
-
-	if (args.list_fpga) {
-		stringstream t;
-		t << setw(12) << left << "IDCode" << setw(14) << "manufacturer";
-		t << setw(16) << "family" << setw(20) << "model";
-		printSuccess(t.str());
-		for (auto b = fpga_list.begin(); b != fpga_list.end(); b++) {
-			fpga_model fpga = (*b).second;
-			stringstream ss, idCode;
-			idCode << "0x" << hex << setw(8) << setfill('0') << (*b).first;
-			ss << setw(12) << left << idCode.str();
-			ss << setw(14) << fpga.manufacturer << setw(16) << fpga.family;
-			ss << setw(20) << fpga.model;
-			printInfo(ss.str());
-		}
-		cout << endl;
-	}
-
-	if (args.scan_usb) {
-		libusb_ll usb(0, 0, args.verbose);
-		usb.scan();
-	}
 }
 
