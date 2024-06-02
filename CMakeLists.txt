@@ -83,7 +83,6 @@ set(OPENFPGALOADER_SOURCE
 	src/common.cpp
 	src/ice40.cpp
 	src/ihexParser.cpp
-	src/pofParser.cpp
 	src/rawParser.cpp
 	src/spiFlash.cpp
 	src/spiInterface.cpp
@@ -109,7 +108,6 @@ set(OPENFPGALOADER_HEADERS
 	src/cxxopts.hpp
 	src/ice40.hpp
 	src/ihexParser.hpp
-	src/pofParser.hpp
 	src/progressBar.hpp
 	src/rawParser.hpp
 	src/usbBlaster.hpp
@@ -163,15 +161,7 @@ target_link_libraries(openFPGALoader
 	${LIBFTDI_LIBRARIES}
 )
 
-# Gowin GWU2X JTAG interface
-if(ENABLE_GOWIN_GWU2X)
-	target_sources(openFPGALoader PRIVATE src/gwu2x_jtag.cpp)
-	list (APPEND OPENFPGALOADER_HEADERS src/gwu2x_jtag.hpp)
-	add_definitions(-DENABLE_GOWIN_GWU2X=1)
-	message("Gowin GWU2X support enabled")
-else()
 	message("Gowin GWU2X support disabled")
-endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	# winsock provides ntohs
