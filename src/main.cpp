@@ -570,24 +570,9 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 
 		options
 			.add_options()
-			("altsetting", "DFU interface altsetting (only for DFU mode)",
-				cxxopts::value<int16_t>(args->altsetting))
 			("bitstream", "bitstream",
-				cxxopts::value<std::string>(args->bit_file))
+                               cxxopts::value<std::string>(args->bit_file))
 			("c,cable", "jtag interface", cxxopts::value<string>(args->cable))
-			("status-pin",
-				"JTAG mode / FTDI: GPIO pin number to use as a status indicator (active low)",
-				cxxopts::value<int>(args->status_pin))
-			("invert-read-edge",
-				"JTAG mode / FTDI: read on negative edge instead of positive",
-				cxxopts::value<bool>(args->invert_read_edge))
-			("cable-index", "probe index (FTDI and cmsisDAP)",
-				cxxopts::value<int16_t>(args->cable_index))
-			("ftdi-serial", "FTDI chip serial number",
-				cxxopts::value<string>(args->ftdi_serial))
-			("ftdi-channel",
-				"FTDI chip channel number (channels 0-3 map to A-D)",
-				cxxopts::value<int>(args->ftdi_channel))
 #if defined(USE_DEVICE_ARG)
 			("d,device",  "device to use (/dev/ttyUSBx)",
 				cxxopts::value<string>(args->device))
@@ -597,38 +582,12 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 			("freq",        "jtag frequency (Hz)", cxxopts::value<string>(freqo))
 			("f,write-flash",
 				"write bitstream in flash (default: false)")
-			("list-boards", "list all supported boards",
-				cxxopts::value<bool>(args->list_boards))
-			("list-cables", "list all supported cables",
-				cxxopts::value<bool>(args->list_cables))
-			("list-fpga", "list all supported FPGA",
-				cxxopts::value<bool>(args->list_fpga))
-			("m,write-sram",
-				"write bitstream in SRAM (default: true)")
-			("pins", "pin config TDI:TDO:TCK:TMS",
-				cxxopts::value<vector<string>>(pins))
-			("probe-firmware", "firmware for JTAG probe (usbBlasterII)",
-				cxxopts::value<string>(args->probe_firmware))
-			("protect-flash",   "protect SPI flash area",
-				cxxopts::value<uint32_t>(args->protect_flash))
-			("quiet", "Produce quiet output (no progress bar)",
-				cxxopts::value<bool>(quiet))
 			("r,reset",   "reset FPGA after operations",
 				cxxopts::value<bool>(args->reset))
-			("skip-load-bridge", "skip writing bridge to SRAM when in write-flash mode",
-				cxxopts::value<bool>(args->skip_load_bridge))
-			("skip-reset", "skip resetting the device when in write-flash mode",
-				cxxopts::value<bool>(args->skip_reset))
-			("spi",   "SPI mode (only for FTDI in serial mode)",
-				cxxopts::value<bool>(args->spi))
 			("unprotect-flash",   "Unprotect flash blocks",
 				cxxopts::value<bool>(args->unprotect_flash))
 			("v,verbose", "Produce verbose output", cxxopts::value<bool>(verbose))
-			("verbose-level", "verbose level -1: quiet, 0: normal, 1:verbose, 2:debug",
-				cxxopts::value<int8_t>(verbose_level))
 			("h,help", "Give this help list")
-			("verify", "Verify write operation (SPI Flash only)",
-				cxxopts::value<bool>(args->verify))
 			("V,Version", "Print program version");
 
 		options.parse_positional({"bitstream"});
@@ -662,44 +621,8 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 			return 1;
 		}
 
-		if (result.count("misc-device")) {
-			auto misc_devices = result["misc-device"].as<std::vector<std::string>>();
-			for (auto &dev : misc_devices) {
-				uint32_t idcode;
-				int irlen;
-				std::string name;
-				std::stringstream ss(dev);
-				std::string item;
-				std::vector<std::string> tokens;
-
-				while (std::getline(ss, item, ',')) {
-					tokens.push_back(item);
-				}
-
-				if (tokens.size() != 3) {
-					printError("Error: invalid format for misc-device.");
-					throw std::exception();
-				}
-
-				idcode = std::stoul(tokens[0], nullptr, 16);
-				irlen = std::stoi(tokens[1]);
-				name = tokens[2];
-				args->user_misc_devs[idcode] = {name, irlen};
-			}
-		}
-
-		if (result.count("write-flash") && result.count("write-sram") &&
-				result.count("dump-flash")) {
-			printError("Error: both write to flash and write to ram enabled");
-			throw std::exception();
-		}
-
-		if (result.count("write-flash"))
-			args->prg_type = Device::WR_FLASH;
 		else if (result.count("write-sram"))
 			args->prg_type = Device::WR_SRAM;
-		else if (result.count("dump-flash"))
-			args->prg_type = Device::RD_FLASH;
 		else if (result.count("external-flash"))
 			args->prg_type = Device::WR_FLASH;
 
@@ -714,36 +637,6 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 				throw std::exception();
 			}
 			args->freq = static_cast<uint32_t>(freq);
-		}
-
-		if (result.count("status-pin")) {
-			if (args->status_pin < 4 || args->status_pin > 15) {
-				printError("Error: valid status pin numbers are 4-15.");
-				throw std::exception();
-			}
-		}
-
-		if (result.count("ftdi-channel")) {
-			if (args->ftdi_channel < 0 || args->ftdi_channel > 3) {
-				printError("Error: valid FTDI channels are 0-3.");
-				throw std::exception();
-			}
-		}
-
-		if (result.count("busdev-num")) {
-			if (bus_dev_num.size() != 2) {
-				printError("Error: busdev-num must be xx:yy");
-				throw std::exception();
-			}
-			try {
-				args->bus_addr = static_cast<uint8_t>(std::stoi(bus_dev_num[0],
-					nullptr, 10));
-				args->device_addr = static_cast<uint8_t>(
-					std::stoi(bus_dev_num[1], nullptr, 10));
-			} catch (std::exception &e) {
-				printError("Error: busdev-num invalid format: must be numeric values");
-				throw std::exception();
-			}
 		}
 
 		if (result.count("pins")) {
@@ -790,35 +683,6 @@ int parse_opt(int argc, char **argv, struct arguments *args,
 				}
 			}
 			args->pin_config = true;
-		}
-
-		if (args->target_flash == "both" || args->target_flash == "secondary") {
-			if ((args->prg_type == Device::WR_FLASH || args->prg_type == Device::RD_FLASH) &&
-				 args->secondary_bit_file.empty() &&
-				 !args->protect_flash &&
-				 !args->unprotect_flash &&
-				 !args->bulk_erase_flash
-				) {
-				printError("Error: secondary bitfile not specified");
-				cout << options.help() << endl;
-				throw std::exception();
-			}
-		}
-
-		if (args->list_cables || args->list_boards || args->list_fpga ||
-			args->scan_usb)
-			args->is_list_command = true;
-
-		if (args->mcufw.empty()) {
-			printf("empty\n");
-		} else {
-			printf("pas empty\n");
-		}
-
-		if (result.count("read-register")) {
-			args->read_register = rd_reg;
-			printf("read_register");
-			std::cout << args->read_register << std::endl;
 		}
 
 		if (args->bit_file.empty() &&
