@@ -89,12 +89,9 @@ if (USE_PKGCONFIG)
 endif()
 
 set(OPENFPGALOADER_SOURCE
-	src/ch552_jtag.cpp
 	src/common.cpp
 	src/dfu.cpp
 	src/dfuFileParser.cpp
-	src/dirtyJtag.cpp
-	src/ch347jtag.cpp
 	src/fx2_ll.cpp
 	src/ice40.cpp
 	src/ihexParser.cpp
@@ -116,9 +113,7 @@ set(OPENFPGALOADER_SOURCE
 	src/main.cpp
 	src/latticeBitParser.cpp
 	src/libusb_ll.cpp
-	src/gowin.cpp
 	src/device.cpp
-	src/jlink.cpp
 	src/lattice.cpp
 	src/progressBar.cpp
 	src/fsparser.cpp
@@ -127,13 +122,10 @@ set(OPENFPGALOADER_SOURCE
 )
 
 set(OPENFPGALOADER_HEADERS
-	src/ch552_jtag.hpp
 	src/common.hpp
 	src/cxxopts.hpp
 	src/dfu.hpp
 	src/dfuFileParser.hpp
-	src/dirtyJtag.hpp
-	src/ch347jtag.hpp
 	src/fx2_ll.hpp
 	src/ice40.hpp
 	src/ihexParser.hpp
@@ -144,7 +136,6 @@ set(OPENFPGALOADER_HEADERS
 	src/bitparser.hpp
 	src/ftdiJtagBitbang.hpp
 	src/ftdiJtagMPSSE.hpp
-	src/jlink.hpp
 	src/jtag.hpp
 	src/jtagInterface.hpp
 	src/libusb_ll.hpp
@@ -162,7 +153,6 @@ set(OPENFPGALOADER_HEADERS
 	src/svf_jtag.hpp
 	src/configBitstreamParser.hpp
 	src/device.hpp
-	src/gowin.hpp
 	src/cable.hpp
 	src/ftdispi.hpp
 	src/lattice.hpp
@@ -238,13 +228,6 @@ if (ENABLE_LIBGPIOD)
 		message("libgpiod v1 support enabled")
 	endif()
 endif(ENABLE_LIBGPIOD)
-
-if (ENABLE_JETSONNANOGPIO)
-	add_definitions(-DENABLE_JETSONNANOGPIO=1)
-	target_sources(openFPGALoader PRIVATE src/jetsonNanoJtagBitbang.cpp)
-	list (APPEND OPENFPGALOADER_HEADERS src/jetsonNanoJtagBitbang.hpp)
-	message("Jetson Nano GPIO support enabled")
-endif(ENABLE_JETSONNANOGPIO)
 
 if (ENABLE_UDEV OR ENABLE_LIBGPIOD OR ENABLE_JETSONNANOGPIO)
 	add_definitions(-DUSE_DEVICE_ARG)
