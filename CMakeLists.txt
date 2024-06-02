@@ -99,7 +99,6 @@ set(OPENFPGALOADER_SOURCE
 	src/lattice.cpp
 	src/configBitstreamParser.cpp
 	src/progressBar.cpp
-	src/fsparser.cpp
 	src/ftdispi.cpp
 	src/ftdipp_mpsse.cpp
 	src/bitparser.cpp
@@ -120,7 +119,6 @@ set(OPENFPGALOADER_HEADERS
 	src/jtag.hpp
 	src/jtagInterface.hpp
 	src/libusb_ll.hpp
-	src/fsparser.hpp
 	src/part.hpp
 	src/board.hpp
 	src/jedParser.hpp
