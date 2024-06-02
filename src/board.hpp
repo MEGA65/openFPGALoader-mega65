@@ -102,48 +102,10 @@ typedef struct {
 	{_name, {"", _cable, _fpga_part, 0, 0, 0, COMM_DFU, {}, {}, 0, _vid, _pid, _alt}}
 
 static std::map <std::string, target_board_t> board_list = {
-	JTAG_BOARD("analogMax",       "",               "ft2232",   0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("c5g",             "", "usb-blaster",0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("certusnx_versa_evn",    "", "ft2232", 0, 0, CABLE_MHZ(1)),
-	JTAG_BOARD("certuspronx_evn",       "", "ft2232", 0, 0, CABLE_MHZ(1)),
-	JTAG_BOARD("certuspronx_versa_evn", "", "ft2232", 0, 0, CABLE_MHZ(1)),
-	JTAG_BOARD("de0",             "", "usb-blaster",0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("ecp5_evn",        "", "ft2232",     0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("ecpix5",          "", "ecpix5-debug", 0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("ecpix5_r03",      "", "ft4232",       0, 0, CABLE_DEFAULT),
-	DFU_BOARD("fomu",             "", "dfu", 0x1209, 0x5bf0, 0),
-	SPI_BOARD("ft2232_spi",      "none", "ft2232",
-			DBUS7, DBUS6, 0,
-			DBUS4, DBUS0, DBUS1, DBUS2,
-			0, 0, CABLE_DEFAULT),
-	SPI_BOARD("gatemate_pgm_spi",   "colognechip", "gatemate_pgm",
-			DBUS4, DBUS5, CBUS0, DBUS3, DBUS0, DBUS1, DBUS2, 0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("gatemate_evb_jtag", "", "gatemate_evb_jtag", 0, 0, CABLE_DEFAULT),
-	SPI_BOARD("gatemate_evb_spi",   "colognechip", "gatemate_evb_spi",
-			DBUS4, DBUS5, CBUS0, DBUS3, DBUS0, DBUS1, DBUS2, 0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("genesys2",        "xc7k325tffg900", "digilent_b", 0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("gr740-mini",      "", "ft4232hp_b",       0, 0, CABLE_MHZ(1)),
-	JTAG_BOARD("hseda-xc6slx16",  "xc6slx16ftg256", "",           0, 0, CABLE_DEFAULT),
-	/* most ice40 boards uses the same pinout */
 	SPI_BOARD("ice40_generic",    "lattice", "ft2232",
-			DBUS7, DBUS6, 0,
-			DBUS4, DBUS0, DBUS1, DBUS2,
-			0, 0, CABLE_DEFAULT),
-	DFU_BOARD("icebreaker-bitsy", "", "dfu", 0x1d50, 0x6146, 0),
-	JTAG_BOARD("LD-SCHOKO",       "LFE5U-45F-6CABGA256", "", 0, 0, CABLE_MHZ(6)),
-	DFU_BOARD("LD-SCHOKO-DFU",        "", "dfu", 0x16d0, 0x116d, 0),
-	JTAG_BOARD("LD-KONFEKT",      "LFE5U-12F-6BG256C", "", 0, 0, CABLE_MHZ(6)),
-	DFU_BOARD("LD-KONFEKT-DFU",       "", "dfu", 0x16d0, 0x116d, 0),
-	JTAG_BOARD("lilygo-t-fpga",   "", "gwu2x",      0, 0, CABLE_DEFAULT),
-	/* left for backward compatibility, use tec0117 instead */
-	JTAG_BOARD("littleBee",       "", "ft2232",     0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("machXO2EVN",      "", "ft2232",     0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("machXO3SK",       "", "ft2232",     0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("machXO3EVN",      "", "ft2232",     0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("minispartan6",    "", "ft2232",    0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("olimex_gatemateevb", "GM1A1", "dirtyJtag", 0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("runber",          "", "ft232",      0, 0, CABLE_DEFAULT),
-	JTAG_BOARD("tec0117",         "", "ft2232",     0, 0, CABLE_DEFAULT)
+                       DBUS7, DBUS6, 0,
+                       DBUS4, DBUS0, DBUS1, DBUS2,
+                       0, 0, CABLE_DEFAULT)
 };
 
 #endif
