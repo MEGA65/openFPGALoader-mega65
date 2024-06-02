@@ -12,7 +12,6 @@
 #include <vector>
 #include <string>
 
-#include "anlogicCable.hpp"
 #include "ch552_jtag.hpp"
 #include "display.hpp"
 #include "jtag.hpp"
@@ -38,9 +37,6 @@
 #include "remoteBitbang_client.hpp"
 #endif
 #include "usbBlaster.hpp"
-#ifdef ENABLE_XVC
-#include "xvc_client.hpp"
-#endif
 
 using namespace std;
 
@@ -90,9 +86,6 @@ Jtag::Jtag(const cable_t &cable, const jtag_pins_conf_t *pin_conf,
 			_ir_bits_before(0), _ir_bits_after(0), _curr_tdi(1)
 {
 	switch (cable.type) {
-	case MODE_ANLOGICCABLE:
-		_jtag = new AnlogicCable(clkHZ);
-		break;
 	case MODE_FTDI_BITBANG:
 		if (pin_conf == NULL)
 			throw std::exception();
@@ -134,13 +127,8 @@ Jtag::Jtag(const cable_t &cable, const jtag_pins_conf_t *pin_conf,
 		throw std::exception();
 #endif
 	case MODE_XVC_CLIENT:
-#ifdef ENABLE_XVC
-		_jtag = new XVC_client(ip_adr, port, clkHZ, verbose);
-		break;
-#else
 		std::cerr << "Jtag: support for xvc-client was not enabled at compile time" << std::endl;
 		throw std::exception();
-#endif
 #ifdef ENABLE_LIBGPIOD
 	case MODE_LIBGPIOD_BITBANG:
 		_jtag = new LibgpiodJtagBitbang(pin_conf, dev, clkHZ, verbose);

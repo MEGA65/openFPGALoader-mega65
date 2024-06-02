@@ -89,17 +89,12 @@ if (USE_PKGCONFIG)
 endif()
 
 set(OPENFPGALOADER_SOURCE
-	src/anlogic.cpp
-	src/anlogicBitParser.cpp
-	src/anlogicCable.cpp
 	src/ch552_jtag.cpp
 	src/common.cpp
 	src/dfu.cpp
 	src/dfuFileParser.cpp
 	src/dirtyJtag.cpp
 	src/ch347jtag.cpp
-	src/efinix.cpp
-	src/efinixHexParser.cpp
 	src/fx2_ll.cpp
 	src/ice40.cpp
 	src/ihexParser.cpp
@@ -129,19 +124,10 @@ set(OPENFPGALOADER_SOURCE
 	src/fsparser.cpp
 	src/mcsParser.cpp
 	src/ftdispi.cpp
-	src/altera.cpp
 	src/bitparser.cpp
-	src/xilinx.cpp
-	src/xilinxMapParser.cpp
-	src/colognechip.cpp
-	src/colognechipCfgParser.cpp
 )
 
 set(OPENFPGALOADER_HEADERS
-	src/altera.hpp
-	src/anlogic.hpp
-	src/anlogicBitParser.hpp
-	src/anlogicCable.hpp
 	src/ch552_jtag.hpp
 	src/common.hpp
 	src/cxxopts.hpp
@@ -149,8 +135,6 @@ set(OPENFPGALOADER_HEADERS
 	src/dfuFileParser.hpp
 	src/dirtyJtag.hpp
 	src/ch347jtag.hpp
-	src/efinix.hpp
-	src/efinixHexParser.hpp
 	src/fx2_ll.hpp
 	src/ice40.hpp
 	src/ihexParser.hpp
@@ -185,10 +169,6 @@ set(OPENFPGALOADER_HEADERS
 	src/ftdispi.hpp
 	src/lattice.hpp
 	src/latticeBitParser.hpp
-	src/xilinx.hpp
-	src/xilinxMapParser.hpp
-	src/colognechip.hpp
-	src/colognechipCfgParser.hpp
 )
 
 link_directories(
@@ -289,15 +269,7 @@ if (ENABLE_CMSISDAP)
 	endif()
 endif(ENABLE_CMSISDAP)
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	add_definitions(-DENABLE_XVC=1)
-	target_sources(openFPGALoader PRIVATE src/xvc_client.cpp src/xvc_server.cpp)
-	list (APPEND OPENFPGALOADER_HEADERS src/xvc_client.hpp src/xvc_server.hpp)
-	set(CMAKE_EXE_LINKER_FLAGS "-pthread ${CMAKE_EXE_LINKER_FLAGS}")
-	message("Xilinx Virtual Server support enabled")
-else()
 		message("Xilinx Virtual Server support disabled")
-endif()
 
 if (ENABLE_REMOTEBITBANG)
 	add_definitions(-DENABLE_REMOTEBITBANG=1)
