@@ -122,7 +122,6 @@ set(OPENFPGALOADER_SOURCE
 	src/lattice.cpp
 	src/progressBar.cpp
 	src/fsparser.cpp
-	src/mcsParser.cpp
 	src/ftdispi.cpp
 	src/bitparser.cpp
 )
@@ -155,7 +154,6 @@ set(OPENFPGALOADER_HEADERS
 	src/jedParser.hpp
 	src/feaparser.hpp
 	src/display.hpp
-	src/mcsParser.hpp
 	src/ftdipp_mpsse.hpp
 	src/spiFlash.hpp
 	src/spiFlashdb.hpp

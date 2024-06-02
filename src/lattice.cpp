@@ -18,7 +18,6 @@
 #include "jtag.hpp"
 #include "lattice.hpp"
 #include "latticeBitParser.hpp"
-#include "mcsParser.hpp"
 #include "progressBar.hpp"
 #include "rawParser.hpp"
 #include "display.hpp"
@@ -150,10 +149,9 @@ Lattice::Lattice(Jtag *jtag, const string filename, const string &file_type,
 	if (prg_type == Device::RD_FLASH) {
 		_mode = READ_MODE;
 	} else if (!_file_extension.empty()) {
-		if (_file_extension == "jed" || _file_extension == "mcs" ||
-				_file_extension == "fea" || _file_extension == "pub") {
+		if (_file_extension == "jed" ) {  
 			_mode = Device::FLASH_MODE;
-		} else if (_file_extension == "bit" || _file_extension == "bin") {
+		} else if (_file_extension == "bit" ) {
 			if (prg_type == Device::WR_FLASH)
 				_mode = Device::FLASH_MODE;
 			else
@@ -758,9 +756,7 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 
 	printInfo("Open file ", false);
 	try {
-		if (_file_extension == "mcs")
-			_bit = new McsParser(_filename, true, _verbose);
-		else if (_file_extension == "bit")
+		if (_file_extension == "bit")
 			_bit = new LatticeBitParser(_filename, false, _verbose);
 		else
 			_bit = new RawParser(_filename, false);
