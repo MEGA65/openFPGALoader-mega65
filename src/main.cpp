@@ -17,10 +17,8 @@
 #include "cable.hpp"
 #include "cxxopts.hpp"
 #include "device.hpp"
-#include "dfu.hpp"
 #include "display.hpp"
 #include "ftdispi.hpp"
-#include "gowin.hpp"
 #include "ice40.hpp"
 #include "lattice.hpp"
 #include "libusb_ll.hpp"
@@ -28,7 +26,6 @@
 #include "part.hpp"
 #include "spiFlash.hpp"
 #include "rawParser.hpp"
-#include "svf_jtag.hpp"
 
 #define DEFAULT_FREQ 	6000000
 
@@ -353,61 +350,6 @@ int main(int argc, char **argv)
 		return spi_ret;
 	}
 
-	/* ------------------- */
-	/* DFU access          */
-	/* ------------------- */
-	if (args.dfu || (board && board->mode == COMM_DFU)) {
-		/* try to init DFU probe */
-		DFU *dfu = NULL;
-		uint16_t vid = 0, pid = 0;
-		int altsetting = -1;
-		if (board) {
-			vid = board->vid;
-			pid = board->pid;
-			altsetting = board->altsetting;
-		}
-		if (args.altsetting != -1) {
-			if (altsetting != -1)
-				printInfo("Board altsetting overridden");
-			altsetting = args.altsetting;
-		}
-
-		if (args.vid != 0) {
-			if (vid != 0)
-				printInfo("Board VID overridden");
-			vid = args.vid;
-		}
-		if (args.pid != 0) {
-			if (pid != 0)
-				printInfo("Board PID overridden");
-			pid = args.pid;
-		}
-
-		try {
-			dfu = new DFU(args.bit_file, args.detect, vid, pid, altsetting,
-					args.verbose);
-		} catch (std::exception &e) {
-			printError("DFU init failed with: " + string(e.what()));
-			return EXIT_FAILURE;
-		}
-		/* if verbose or detect: display device */
-		if (args.verbose > 0 || args.detect)
-			dfu->displayDFU();
-
-		/* if detect: stop */
-		if (args.detect)
-			return EXIT_SUCCESS;
-
-		try {
-			dfu->download();
-		} catch (std::exception &e) {
-			printError("DFU download failed with: " + string(e.what()));
-			return EXIT_FAILURE;
-		}
-
-		return EXIT_SUCCESS;
-	}
-
 	/* jtag base */
 
 
@@ -500,18 +442,6 @@ int main(int argc, char **argv)
 	}
 
 	jtag->device_select(index);
-
-	/* detect svf file and program the device */
-	if (!args.file_type.compare("svf") ||
-			args.bit_file.find(".svf") != string::npos) {
-		SVF_jtag *svf = new SVF_jtag(jtag, args.verbose);
-		try {
-			svf->parse(args.bit_file);
-		} catch (std::exception &e) {
-			return EXIT_FAILURE;
-		}
-		return EXIT_SUCCESS;
-	}
 
 	/* check if selected device is supported
 	 * mainly used in conjunction with --index-chain

@@ -11,15 +11,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 else()
 	option(ENABLE_UDEV "use udev to search JTAG adapter from /dev/xx" ON)
 endif()
-option(ENABLE_CMSISDAP "enable cmsis DAP interface (requires hidapi)" ON)
-option(ENABLE_GOWIN_GWU2X "enable Gowin GWU2X interface" ON)
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	option(ENABLE_LIBGPIOD "enable libgpiod bitbang driver (requires libgpiod)" ON)
-	option(ENABLE_REMOTEBITBANG "enable remote bitbang driver" ON)
-else()
-	set(ENABLE_LIBGPIOD OFF)
-	set(ENABLE_REMOTEBITBANG OFF)
-endif()
 option(USE_PKGCONFIG "Use pkgconfig to find libraries" ON)
 option(LINK_CMAKE_THREADS "Use CMake find_package to link the threading library" OFF)
 set(BLASTERII_PATH "" CACHE STRING "usbBlasterII firmware directory")
@@ -90,43 +81,33 @@ endif()
 
 set(OPENFPGALOADER_SOURCE
 	src/common.cpp
-	src/dfu.cpp
-	src/dfuFileParser.cpp
-	src/fx2_ll.cpp
 	src/ice40.cpp
 	src/ihexParser.cpp
 	src/pofParser.cpp
 	src/rawParser.cpp
 	src/spiFlash.cpp
 	src/spiInterface.cpp
-	src/usbBlaster.cpp
-	src/epcq.cpp
-	src/svf_jtag.cpp
 	src/jedParser.cpp
-	src/feaparser.cpp
 	src/display.cpp
 	src/jtag.cpp
 	src/ftdiJtagBitbang.cpp
 	src/ftdiJtagMPSSE.cpp
-	src/configBitstreamParser.cpp
-	src/ftdipp_mpsse.cpp
 	src/main.cpp
 	src/latticeBitParser.cpp
 	src/libusb_ll.cpp
 	src/device.cpp
 	src/lattice.cpp
+	src/configBitstreamParser.cpp
 	src/progressBar.cpp
 	src/fsparser.cpp
 	src/ftdispi.cpp
+	src/ftdipp_mpsse.cpp
 	src/bitparser.cpp
 )
 
 set(OPENFPGALOADER_HEADERS
 	src/common.hpp
 	src/cxxopts.hpp
-	src/dfu.hpp
-	src/dfuFileParser.hpp
-	src/fx2_ll.hpp
 	src/ice40.hpp
 	src/ihexParser.hpp
 	src/pofParser.hpp
@@ -143,19 +124,16 @@ set(OPENFPGALOADER_HEADERS
 	src/part.hpp
 	src/board.hpp
 	src/jedParser.hpp
-	src/feaparser.hpp
 	src/display.hpp
-	src/ftdipp_mpsse.hpp
 	src/spiFlash.hpp
 	src/spiFlashdb.hpp
-	src/epcq.hpp
 	src/spiInterface.hpp
-	src/svf_jtag.hpp
-	src/configBitstreamParser.hpp
 	src/device.hpp
 	src/cable.hpp
 	src/ftdispi.hpp
+	src/ftdipp_mpsse.hpp
 	src/lattice.hpp
+	src/configBitstreamParser.hpp
 	src/latticeBitParser.hpp
 )
 
@@ -236,19 +214,6 @@ endif(ENABLE_UDEV OR ENABLE_LIBGPIOD OR ENABLE_JETSONNANOGPIO)
 if (BUILD_STATIC)
 	set_target_properties(openFPGALoader PROPERTIES LINK_SEARCH_END_STATIC 1)
 endif()
-
-if (ENABLE_CMSISDAP)
-	if (HIDAPI_FOUND)
-		include_directories(${HIDAPI_INCLUDE_DIRS})
-		target_link_libraries(openFPGALoader ${HIDAPI_LIBRARIES})
-		add_definitions(-DENABLE_CMSISDAP=1)
-		target_sources(openFPGALoader PRIVATE src/cmsisDAP.cpp)
-		list (APPEND OPENFPGALOADER_HEADERS src/cmsisDAP.hpp)
-		message("cmsis_dap support enabled")
-	else()
-		message("hidapi-libusb not found: cmsis_dap support disabled")
-	endif()
-endif(ENABLE_CMSISDAP)
 
 		message("Xilinx Virtual Server support disabled")
 
