@@ -82,7 +82,6 @@ endif()
 set(OPENFPGALOADER_SOURCE
 	src/common.cpp
 	src/ice40.cpp
-	src/ihexParser.cpp
 	src/rawParser.cpp
 	src/spiFlash.cpp
 	src/spiInterface.cpp
@@ -107,7 +106,6 @@ set(OPENFPGALOADER_HEADERS
 	src/common.hpp
 	src/cxxopts.hpp
 	src/ice40.hpp
-	src/ihexParser.hpp
 	src/progressBar.hpp
 	src/rawParser.hpp
 	src/usbBlaster.hpp
